@@ -18,6 +18,17 @@
             color: white;
             text-shadow: 0 2px 5px rgba(150, 150, 150, 0.8);
         }
+        #messages p{
+            text-align: center;
+            color: white;
+            font-size: 22px;
+            text-shadow: 0 2px 5px rgba(150, 150, 150, 0.8);
+        }
+        #messages h3{
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 5px rgba(150, 150, 150, 0.8);
+        }
 
         #root {
             display: flex;
@@ -116,19 +127,20 @@
     <h1>Cut your link</h1>
     <div id="root">
         <div class="form">
-            <form class="" action="/" method="POST">
+            <form action="/" method="POST">
                 <input id="message_text" class="form__input" type="text"
                        name="get_link" placeholder="Enter your URL ..."/>
                 <button class="form__button" type="submit">
-                    <div class="" onclick="sendMessage()">
+                    <div onclick="sendMessage()">
                         Send
                     </div>
                 </button>
-
             </form>
         </div>
         <div id="messages">
-
+            <h3>Use this address to connect to the resource</h3>
+            <input class="form__input" type="text" value={{text}} id="myInput">
+            <button class="form__button" onclick="myFunction()">Copy text</button>
         </div>
     </div>
 </div>
@@ -138,4 +150,13 @@
         alert('Your link is being processed');
     }
 </script>
+<script>
+function myFunction() {
+  var copyText = document.getElementById("myInput");
+  copyText.select();
+  document.execCommand("copy");
+  alert("Copied the text: " + copyText.value);
+}
+</script>
+
 </html>
