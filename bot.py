@@ -32,13 +32,14 @@ async def help_command(message: types.Message):
 
 async def get_user_url(message: types.Message):
     user_url_list = message.text.split('://')
+    shortener_server = os.environ.get('SHORTENER_SERVER')
     try:
         db = await setup_db()
         collection = db['shortener']
         obj_url = await collection.insert_one({'user_url': user_url_list[1], 'prefix': user_url_list[0]})
         user_id = str(obj_url.inserted_id)
         await message.answer(
-            user_id
+            shortener_server + user_id
         )
     except Exception as error:
         await message.answer(
@@ -47,7 +48,7 @@ async def get_user_url(message: types.Message):
 
 
 async def send_user_url(message: types.Message):
-    get_user_link_id = message.text
+    get_user_link_id = message.text.replace(os.environ.get('SHORTENER_SERVER'), '')
     try:
         db = await setup_db()
         collection = db['shortener']
