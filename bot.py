@@ -5,10 +5,9 @@ import asyncio
 from bson import ObjectId
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.bot.api import TelegramAPIServer
-from aiogram.types import ContentType
 
 from db import setup_db
+
 
 load_dotenv()
 API_TOKEN = os.environ.get('BOT_TOKEN')

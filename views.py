@@ -42,8 +42,9 @@ async def handler_link(request):
         collection = request.app['db']['shortener']
         document = await collection.find_one({'_id': ObjectId(user_link_id)})
         url = document.get('user_url')
+        prefix = document.get('prefix', 'http')
     except Exception as error:
         return web.Response(text=str(error))
-    return web.HTTPFound(url)
+    return web.HTTPFound(prefix + '://' + url)
 
 
