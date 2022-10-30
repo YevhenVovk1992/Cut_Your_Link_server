@@ -17,11 +17,14 @@ async def get_user_url_post(request):
     form_get_link = await request.text()
     user_url_decode = form_get_link.replace('get_link=', '')
     if user_url_decode:
-        user_url_encode = urllib.parse.unquote_plus(user_url_decode)
+        user_url_encode = urllib.parse.unquote_plus(user_url_decode).split('://')
         try:
             db = request.app['db']
             collection = db['shortener']
-            url_id = await collection.insert_one({'user_url': user_url_encode})
+            url_id = await collection.insert_one(
+                {'user_url': user_url_encode[1],
+                 'prefix': user_url_encode[0]}
+            )
         except Exception as error:
             return web.Response(text=str(error))
         data = {
