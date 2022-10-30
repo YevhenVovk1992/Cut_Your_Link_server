@@ -2,6 +2,7 @@ import os
 import logging
 import asyncio
 
+from bson import ObjectId
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.bot.api import TelegramAPIServer
@@ -31,18 +32,36 @@ async def help_command(message: types.Message):
 
 
 async def get_user_url(message: types.Message):
-    db = await setup_db()
-    collection = db['shortener']
     user_url_list = message.text.split('://')
-    obj_url = await collection.insert_one({'user_url': user_url_list[1], 'prefix': user_url_list[0]})
-    user_id = str(obj_url.inserted_id)
-    await message.answer(
-        user_id
-    )
+    try:
+        db = await setup_db()
+        collection = db['shortener']
+        obj_url = await collection.insert_one({'user_url': user_url_list[1], 'prefix': user_url_list[0]})
+        user_id = str(obj_url.inserted_id)
+        await message.answer(
+            user_id
+        )
+    except Exception as error:
+        await message.answer(
+            str(error)
+        )
 
 
 async def send_user_url(message: types.Message):
-    await message.answer()
+    get_user_link_id = message.text
+    try:
+        db = await setup_db()
+        collection = db['shortener']
+        obj_url = await collection.find_one({'_id': ObjectId(get_user_link_id)})
+        user_url = obj_url.get('user_url')
+        prefix = obj_url.get('prefix', 'http')
+        await message.answer(
+            prefix + '://' + user_url
+        )
+    except Exception as error:
+        await message.answer(
+            str(error)
+        )
 
 
 async def main():
@@ -52,7 +71,7 @@ async def main():
         disp.register_message_handler(start_command, commands={'start'})
         disp.register_message_handler(help_command, commands={'help'})
         disp.register_message_handler(get_user_url, regexp='http.+')
-        disp.register_message_handler(send_user_url)
+        disp.register_message_handler(send_user_url, regexp='^\w{24}$')
         await disp.start_polling()
     finally:
         await bot.close()
