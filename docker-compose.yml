@@ -1,8 +1,23 @@
-
-# Use root/example as user/password credentials
 version: '3.1'
 
 services:
+  web:
+    build: .
+    env_file:
+      - .env
+    container_name: 'shortener'
+    restart: always
+    ports:
+      - '8080:8080'
+    command: python app.py
+
+  tbot:
+    build: .
+    env_file:
+      - .env
+    container_name: 'shortener_bot'
+    restart: always
+    command: python bot.py
 
   mongo:
     image: mongo:6
